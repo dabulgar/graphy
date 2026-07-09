@@ -3,6 +3,11 @@
     "description": "A PHP abstraction layer for creating, updating, and fetching RRDTool databases with fluent model-based APIs.",
     "type": "library",
     "license": "MIT",
+    "homepage": "https://github.com/dabulgar/graphy",
+    "support": {
+        "issues": "https://github.com/dabulgar/graphy/issues",
+        "source": "https://github.com/dabulgar/graphy"
+    },
     "keywords": [
         "rrd",
         "rrdtool",
