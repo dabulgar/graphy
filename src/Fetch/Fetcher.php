@@ -108,7 +108,7 @@ class Fetcher
         return $this;
     }
 
-    public function labels(BaseInterval $interval, string $format = 'Y-m-d H:i:s', $nonBoundary = null): self
+    public function labels(BaseInterval $interval, string $format = 'Y-m-d H:i:s', $nonBoundary = 'ts'): self
     {
         $tz = $this->resolveTimezone();
 
@@ -151,6 +151,28 @@ class Fetcher
                 ->format($this->dateFormat);
         }
 
-        return $this->nonBoundary;
+        return $this->resolveNonBoundary($timestamp, $tz);
+    }
+
+    /**
+     * @param int $timestamp
+     * @param string $tz
+     * @return mixed
+     * @throws \DateInvalidTimeZoneException
+     */
+    private function resolveNonBoundary(int $timestamp, string $tz): mixed
+    {
+        if (!is_string($this->nonBoundary)) {
+            return $this->nonBoundary;
+        }
+
+        if ($this->nonBoundary === 'ts') {
+            return $timestamp;
+        }
+
+        return (new \DateTime())
+            ->setTimestamp($timestamp)
+            ->setTimezone(new \DateTimeZone($tz))
+            ->format($this->nonBoundary);
     }
 }

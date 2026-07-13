@@ -185,22 +185,22 @@ class CpuLoadTest extends TestCase
 
         $this->assertSame(
             [
-                null,
-                null,
-                null,
+                self::$start + 2,
+                self::$start + 3,
+                self::$start + 4,
                 '2023-11-14 22:13:25',
-                null,
-                null,
-                null,
-                null,
+                self::$start + 6,
+                self::$start + 7,
+                self::$start + 8,
+                self::$start + 9,
                 '2023-11-14 22:13:30',
-                null,
-                null,
-                null,
-                null,
+                self::$start + 11,
+                self::$start + 12,
+                self::$start + 13,
+                self::$start + 14,
                 '2023-11-14 22:13:35',
-                null,
-                null,
+                self::$start + 16,
+                self::$start + 17,
             ],
             $data['timestamps'],
         );
@@ -223,22 +223,134 @@ class CpuLoadTest extends TestCase
 
         $this->assertSame(
             [
-                null,
-                null,
-                null,
+                self::$start + 2,
+                self::$start + 3,
+                self::$start + 4,
                 '2023-11-15 00:13:25',
-                null,
-                null,
-                null,
-                null,
+                self::$start + 6,
+                self::$start + 7,
+                self::$start + 8,
+                self::$start + 9,
                 '2023-11-15 00:13:30',
-                null,
-                null,
-                null,
-                null,
+                self::$start + 11,
+                self::$start + 12,
+                self::$start + 13,
+                self::$start + 14,
                 '2023-11-15 00:13:35',
+                self::$start + 16,
+                self::$start + 17,
+            ],
+            $data['timestamps'],
+        );
+    }
+
+    public function testLabelsCanKeepNullForNonBoundaryTimestamps()
+    {
+        $start = self::$start;
+        $end = self::$start + 16;
+
+        $data = CpuLoad::fetch(self::$fileName, 2)
+            ->average()
+            ->resolution('1s')
+            ->start($start)
+            ->end($end)
+            ->run()
+            ->labels(SecondInterval::for(5), 'Y-m-d H:i:s', null)
+            ->get();
+
+        $this->assertSame(
+            [
                 null,
                 null,
+                null,
+                '2023-11-14 22:13:25',
+                null,
+                null,
+                null,
+                null,
+                '2023-11-14 22:13:30',
+                null,
+                null,
+                null,
+                null,
+                '2023-11-14 22:13:35',
+                null,
+                null,
+            ],
+            $data['timestamps'],
+        );
+    }
+
+    public function testLabelsCanUseCustomNonStringNonBoundaryValue()
+    {
+        $start = self::$start;
+        $end = self::$start + 16;
+
+        $data = CpuLoad::fetch(self::$fileName, 2)
+            ->average()
+            ->resolution('1s')
+            ->start($start)
+            ->end($end)
+            ->run()
+            ->labels(SecondInterval::for(5), 'Y-m-d H:i:s', false)
+            ->get();
+
+        $this->assertSame(
+            [
+                false,
+                false,
+                false,
+                '2023-11-14 22:13:25',
+                false,
+                false,
+                false,
+                false,
+                '2023-11-14 22:13:30',
+                false,
+                false,
+                false,
+                false,
+                '2023-11-14 22:13:35',
+                false,
+                false,
+            ],
+            $data['timestamps'],
+        );
+    }
+
+    public function testLabelsCanFormatNonBoundaryTimestamps()
+    {
+        $start = self::$start;
+        $end = self::$start + 16;
+
+        $data = CpuLoad::fetch(self::$fileName, 2)
+            ->average()
+            ->resolution('1s')
+            ->start($start)
+            ->end($end)
+            ->run()
+            ->timezone('Europe/Sofia')
+            ->labels(SecondInterval::for(5), 'H:i:s', 'Y-m-d H:i:s')
+            ->get();
+
+        $this->assertSame(
+            [
+                '2023-11-15 00:13:22',
+                '2023-11-15 00:13:23',
+                '2023-11-15 00:13:24',
+                '00:13:25',
+                '2023-11-15 00:13:26',
+                '2023-11-15 00:13:27',
+                '2023-11-15 00:13:28',
+                '2023-11-15 00:13:29',
+                '00:13:30',
+                '2023-11-15 00:13:31',
+                '2023-11-15 00:13:32',
+                '2023-11-15 00:13:33',
+                '2023-11-15 00:13:34',
+                '00:13:35',
+                '2023-11-15 00:13:36',
+                '2023-11-15 00:13:37',
             ],
             $data['timestamps'],
         );
