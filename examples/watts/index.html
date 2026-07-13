@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Graphy Example</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f5f7fb;
+            color: #172033;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        #app {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 32px 0;
+        }
+
+        header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .meta {
+            margin: 6px 0 0;
+            color: #607087;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: minmax(240px, 1fr) minmax(150px, 220px);
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 16px;
+            padding: 16px;
+            border: 1px solid #dce3ee;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        label {
+            display: grid;
+            gap: 6px;
+            color: #40516a;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        select {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #c7d1df;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #172033;
+            font: inherit;
+            padding: 0 12px;
+        }
+
+        .chart-shell {
+            position: relative;
+            height: min(68vh, 620px);
+            min-height: 360px;
+            border: 1px solid #dce3ee;
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 16px;
+        }
+
+        .status {
+            position: absolute;
+            inset: 16px;
+            display: grid;
+            place-items: center;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.84);
+            color: #40516a;
+            font-size: 14px;
+            z-index: 2;
+        }
+
+        .status.error {
+            color: #a12a2a;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 720px) {
+            #app {
+                width: min(100% - 20px, 1180px);
+                padding: 20px 0;
+            }
+
+            header {
+                display: block;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-shell {
+                height: 62vh;
+                min-height: 320px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header>
+        <div>
+            <h1>Graphy Example</h1>
+            <p class="meta">{{ summary }}</p>
+        </div>
+    </header>
+
+    <div class="controls">
+        <label>
+            Timezone
+            <select v-model="timezone" :disabled="loading">
+                <option v-for="zone in timezones" :key="zone" :value="zone">
+                    {{ timezoneLabel(zone) }}
+                </option>
+            </select>
+        </label>
+
+        <label>
+            Input
+            <select v-model="input" :disabled="loading">
+                <option v-for="option in inputs" :key="option.value" :value="option.value">
+                    {{ option.label }}
+                </option>
+            </select>
+        </label>
+    </div>
+
+    <div class="chart-shell">
+        <div v-if="loading" class="status">Loading chart data...</div>
+        <div v-if="error" class="status error">{{ error }}</div>
+        <canvas ref="chartCanvas"></canvas>
+    </div>
+</div>
+
+<script>
+const { createApp, markRaw, nextTick } = Vue;
+
+createApp({
+    data() {
+        return {
+            chart: null,
+            error: '',
+            loading: false,
+            input: '10m',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+            inputs: [
+                { value: '1s', label: '1 second - last day' },
+                { value: '1m', label: '1 minute - last 5 days' },
+                { value: '10m', label: '10 minutes - last 10 days' },
+                { value: '30m', label: '30 minutes - last 30 days' },
+                { value: '1d', label: '1 day - last 300 days' },
+                { value: '1M', label: '1 month - last 583 days' },
+            ],
+            points: 0,
+            lastUpdated: null,
+            requestId: 0,
+        };
+    },
+    computed: {
+        timezones() {
+            const zones = [
+                'UTC',
+                'Europe/Sofia',
+                'Europe/London',
+                'Europe/Berlin',
+                'America/New_York',
+                'America/Los_Angeles',
+                'Asia/Tokyo',
+            ];
+
+            return Array.from(new Set(['UTC', this.timezone, ...zones])).sort();
+        },
+        summary() {
+            if (!this.lastUpdated) {
+                return 'Select a timezone or input range to load RRD data.';
+            }
+
+            return `${this.points.toLocaleString()} points loaded from api.php`;
+        },
+    },
+    watch: {
+        timezone: 'loadChart',
+        input: 'loadChart',
+    },
+    mounted() {
+        this.loadChart();
+    },
+    methods: {
+        async loadChart() {
+            const requestId = ++this.requestId;
+            this.loading = true;
+            this.error = '';
+
+            try {
+                const params = new URLSearchParams({
+                    timezone: this.timezone,
+                    input: this.input,
+                });
+                const response = await fetch(`api.php?${params.toString()}`, {
+                    headers: { Accept: 'application/json' },
+                });
+                const payload = await response.json();
+
+                if (!response.ok || payload.error) {
+                    throw new Error(payload.error || `Request failed with HTTP ${response.status}`);
+                }
+                if (requestId !== this.requestId) {
+                    return;
+                }
+
+                await nextTick();
+                this.renderChart(payload);
+            } catch (error) {
+                if (requestId === this.requestId) {
+                    this.error = error.message || 'Unable to load chart data.';
+                }
+            } finally {
+                if (requestId === this.requestId) {
+                    this.loading = false;
+                }
+            }
+        },
+        timezoneLabel(timezone) {
+            return `${timezone} (${this.timezoneOffset(timezone)})`;
+        },
+        timezoneOffset(timezone) {
+            const parts = new Intl.DateTimeFormat('en-US', {
+                timeZone: timezone,
+                timeZoneName: 'shortOffset',
+            }).formatToParts(new Date());
+            const value = parts.find((part) => part.type === 'timeZoneName')?.value || 'GMT';
+            if (value === 'GMT') {
+                return '+00:00';
+            }
+
+            const match = value.match(/^GMT([+-])(\d{1,2})(?::(\d{2}))?$/);
+            if (!match) {
+                return value.replace('GMT', 'UTC');
+            }
+
+            const [, sign, hours, minutes = '00'] = match;
+            return `${sign}${hours.padStart(2, '0')}:${minutes}`;
+        },
+        renderChart(payload) {
+            const datasets = payload.datasets || {};
+            const watts = datasets.watts || [];
+            const timestamps = payload.timestamps || [];
+            const timezone = payload.meta?.timezone || this.timezone;
+            const axisLabels = timestamps.map((timestamp) => typeof timestamp === 'string' ? timestamp : '');
+            const labelTicks = axisLabels
+                .map((label, index) => ({ label, index }))
+                .filter((tick) => tick.label !== '');
+
+            this.points = watts.length;
+            this.lastUpdated = new Date();
+
+            const seriesData = watts.map((y, index) => ({ x: index, y }));
+
+            const lineDataset = {
+                label: 'Watts',
+                data: seriesData,
+                borderColor: '#2563eb',
+                backgroundColor: '#2563eb',
+                borderWidth: 1.6,
+                pointRadius: 0,
+                pointHoverRadius: 4,
+                pointHitRadius: 10,
+                pointBackgroundColor: '#2563eb',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 1.5,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.45,
+                spanGaps: true,
+                fill: true,
+                parsing: false,
+            };
+
+            if (this.chart) {
+                this.chart.data.labels = axisLabels;
+                this.chart.data.datasets[0].data = seriesData;
+                this.chart.options.scales.x.afterBuildTicks = (scale) => this.buildTimestampTicks(scale, labelTicks);
+                this.chart.options.scales.x.ticks.callback = (value) => axisLabels[value] || '';
+                this.chart.options.plugins.tooltip.callbacks.title = (items) => {
+                    return this.tooltipTitle(timestamps, axisLabels, items[0]?.dataIndex ?? 0, timezone);
+                };
+                this.chart.update('none');
+                return;
+            }
+
+            this.chart = markRaw(new Chart(this.$refs.chartCanvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: axisLabels,
+                    datasets: [lineDataset],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: false,
+                    normalized: true,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                color: '#40516a',
+                            },
+                        },
+                        decimation: {
+                            enabled: true,
+                            algorithm: 'lttb',
+                            samples: 900,
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => this.tooltipTitle(
+                                    timestamps,
+                                    axisLabels,
+                                    items[0]?.dataIndex ?? 0,
+                                    timezone,
+                                ),
+                                label(context) {
+                                    const value = context.parsed.y;
+                                    return value === null ? 'Watts: no data' : `Watts: ${Number(value).toFixed(2)}`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            afterBuildTicks: (scale) => this.buildTimestampTicks(scale, labelTicks),
+                            grid: {
+                                color: '#eef2f7',
+                            },
+                            ticks: {
+                                color: '#40516a',
+                                font: {
+                                    weight: '700',
+                                },
+                                padding: 8,
+                                callback: (value) => axisLabels[value] || '',
+                            },
+                        },
+                        y: {
+                            grace: '8%',
+                            grid: {
+                                color: '#edf1f7',
+                            },
+                            ticks: {
+                                color: '#607087',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Watts',
+                                color: '#40516a',
+                            },
+                        },
+                    },
+                },
+            }));
+        },
+        buildTimestampTicks(scale, labelTicks) {
+            scale.ticks = labelTicks.map((tick) => ({
+                value: tick.index,
+                label: tick.label,
+            }));
+        },
+        timestampAtIndex(timestamps, index) {
+            const timestamp = timestamps[index];
+            if (Number.isFinite(timestamp)) {
+                return timestamp;
+            }
+
+            let previousIndex = index - 1;
+            while (previousIndex >= 0 && !Number.isFinite(timestamps[previousIndex])) {
+                previousIndex--;
+            }
+
+            let nextIndex = index + 1;
+            while (nextIndex < timestamps.length && !Number.isFinite(timestamps[nextIndex])) {
+                nextIndex++;
+            }
+
+            const previousTimestamp = timestamps[previousIndex];
+            const nextTimestamp = timestamps[nextIndex];
+
+            if (Number.isFinite(previousTimestamp) && Number.isFinite(nextTimestamp)) {
+                const step = (nextTimestamp - previousTimestamp) / (nextIndex - previousIndex);
+                return Math.round(previousTimestamp + step * (index - previousIndex));
+            }
+
+            if (Number.isFinite(previousTimestamp)) {
+                return previousTimestamp;
+            }
+
+            if (Number.isFinite(nextTimestamp)) {
+                return nextTimestamp;
+            }
+
+            return null;
+        },
+        formatTimestamp(timestamp, timezone) {
+            return new Intl.DateTimeFormat(undefined, {
+                timeZone: timezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+            }).format(new Date(timestamp * 1000));
+        },
+        tooltipTitle(timestamps, axisLabels, index, timezone) {
+            const timestamp = this.timestampAtIndex(timestamps, index);
+            if (timestamp !== null) {
+                return `${this.formatTimestamp(timestamp, timezone)} (${timezone})`;
+            }
+
+            if (axisLabels[index]) {
+                return axisLabels[index];
+            }
+
+            return `Point ${index + 1}`;
+        },
+    },
+}).mount('#app');
+</script>
+</body>
+</html>

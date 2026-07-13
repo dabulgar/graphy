@@ -4,6 +4,8 @@ composer.lock
 .phpunit.result.cache
 .phpunit.cache/
 
+examples/**/rrd/
+
 .idea/
 .vscode/
 
