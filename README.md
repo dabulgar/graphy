@@ -4,6 +4,8 @@
 
 RRDTool doesn't know what a "day" or a "week" is — only "N steps". **Graphy** does: a typed, fluent PHP API for RRDTool that adds real calendar-aligned, timezone-and-DST-aware grouping (day / week / month / year) on top of your existing archives, in addition to a clean model-based API for creating, updating, and fetching data.
 
+https://github.com/user-attachments/assets/c3192ec3-a9f0-4f44-8030-82793f785dd7
+
 ### Installation
 
 This library is installable via [Composer](https://getcomposer.org/):
@@ -221,14 +223,14 @@ Every operation throws a typed exception on failure instead of returning `false`
 
 ### Examples
 
-The [`examples/`](examples) directory has two runnable scripts:
+The [`examples/`](examples) directory has runnable examples:
 
-- [`01-basic-crud.php`](examples/01-basic-crud.php) — define a model, create the file, write values, read raw data back.
-- [`02-calendar-grouping.php`](examples/02-calendar-grouping.php) — seeds 5 days of 30-minute readings and fetches them back as one timezone-aware average per calendar day, showing the feature described above.
+- [`watts`](examples/watts) — seeds a local `power.rrd` file and serves a browser chart backed by Graphy fetch/group/label calls.
 
 ```bash
 composer install
-php examples/02-calendar-grouping.php
+php examples/watts/fill.php
+php -S 127.0.0.1:8080 -t examples/watts
 ```
 
 
