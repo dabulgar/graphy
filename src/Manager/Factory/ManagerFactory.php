@@ -6,7 +6,7 @@ use Davos\Graphy\Manager\Drivers\ExtensionDriver;
 use Davos\Graphy\Manager\Manager;
 use Davos\Graphy\ValueObjects\GraphyConfig;
 
-class ManagerFactory
+final class ManagerFactory
 {
     private static ?GraphyConfig $config = null;
 
@@ -14,25 +14,25 @@ class ManagerFactory
 
     public static function configure(array $config): void
     {
-        static::$config = new GraphyConfig($config);
+        self::$config = new GraphyConfig($config);
     }
 
     public static function make(): Manager
     {
-        if (static::$manager !== null) {
-            return static::$manager;
+        if (self::$manager !== null) {
+            return self::$manager;
         }
 
-        if (is_null(static::$config)) {
+        if (is_null(self::$config)) {
             throw new \RuntimeException('Graphy has not been configured. Call ManagerFactory::configure($config) before ManagerFactory::make().');
         }
 
-        $driver = match (static::$config->getDriver()) {
+        $driver = match (self::$config->getDriver()) {
             'ext' => new ExtensionDriver(),
         };
 
-        static::$manager = new Manager($driver, static::$config);
+        self::$manager = new Manager($driver, self::$config);
 
-        return static::$manager;
+        return self::$manager;
     }
 }

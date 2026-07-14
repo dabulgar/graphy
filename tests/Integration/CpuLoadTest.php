@@ -31,9 +31,9 @@ class CpuLoadTest extends TestCase
             @unlink(self::$fileName);
         }
 
-        CpuLoad::create(static::$fileName);
+        CpuLoad::create(self::$fileName);
 
-        CpuLoad::update(static::$fileName,
+        CpuLoad::update(self::$fileName,
             [
                 self::$start + 1 => ['cpu_1' => 10, 'cpu_2' => 10, 'cpu_3' => 10],
                 self::$start + 2 => ['cpu_1' => 20, 'cpu_2' => 10, 'cpu_3' => 10],
