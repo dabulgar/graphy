@@ -10,9 +10,9 @@ class Duration
 	
 	private int $durationInSeconds;
 	
-	public function __construct(string $rrdDuration)
+	public function __construct(string|int $rrdDuration)
 	{
-		if (!preg_match('/^(\d+)([smhdwMy])?$/', $rrdDuration, $match)) {
+		if (!preg_match('/^(\d+)([smhdwMy])?$/', (string)$rrdDuration, $match)) {
 			throw DurationFormatException::invalidDuration($rrdDuration);
 		}
 		
