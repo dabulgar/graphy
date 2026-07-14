@@ -177,7 +177,6 @@ class ConsolidationAggregatorTest extends TestCase
     {
         $result = $this->aggregator->aggregate([10, 20, 30], 'AVERAGE');
 
-        self::assertIsFloat($result);
         self::assertSame(20.0, $result);
     }
 
@@ -217,7 +216,6 @@ class ConsolidationAggregatorTest extends TestCase
     {
         $result = $this->aggregator->aggregate([NAN, NAN], 'AVERAGE');
 
-        self::assertIsFloat($result);
         self::assertNan($result);
     }
 
@@ -225,7 +223,6 @@ class ConsolidationAggregatorTest extends TestCase
     {
         $result = $this->aggregator->aggregate([NAN, NAN], 'MIN');
 
-        self::assertIsFloat($result);
         self::assertNan($result);
     }
 
@@ -233,7 +230,6 @@ class ConsolidationAggregatorTest extends TestCase
     {
         $result = $this->aggregator->aggregate([NAN, NAN], 'MAX');
 
-        self::assertIsFloat($result);
         self::assertNan($result);
     }
 
@@ -241,7 +237,6 @@ class ConsolidationAggregatorTest extends TestCase
     {
         $result = $this->aggregator->aggregate([NAN, NAN], 'LAST');
 
-        self::assertIsFloat($result);
         self::assertNan($result);
     }
 }
