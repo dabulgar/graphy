@@ -1,5 +1,11 @@
 parameters:
-    level: 3
+    level: 4
     paths:
         - src
         - tests
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        -
+            identifier: identical.alwaysFalse
+            path: src/Manager/Drivers/ExtensionDriver.php
+            count: 2
