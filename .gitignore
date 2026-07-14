@@ -1,14 +1,20 @@
-vendor/
-composer.lock
-
-.phpunit.result.cache
-.phpunit.cache/
-
-examples/**/rrd/
-
+# IDE
 .idea/
 .vscode/
 
-.DS_Store
+# Composer
+vendor/
+composer.lock
 
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache/
+
+# PHPStan
 phpstan.neon
+
+# Examples
+examples/**/rrd/
+
+# OS
+.DS_Store
