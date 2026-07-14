@@ -29,6 +29,7 @@ final class ManagerFactory
 
         $driver = match (self::$config->getDriver()) {
             'ext' => new ExtensionDriver(),
+            default => throw new \RuntimeException('Unsupported driver: ' . self::$config->getDriver()),
         };
 
         self::$manager = new Manager($driver, self::$config);
