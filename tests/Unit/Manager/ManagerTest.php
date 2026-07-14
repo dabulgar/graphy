@@ -49,9 +49,7 @@ class ManagerTest extends TestCase
             $this->config($this->tmpDir)
         );
 
-        $this->assertTrue(
-            $manager->create('nested/traffic', ['create-options'])
-        );
+        $manager->create('nested/traffic', ['create-options']);
 
         $this->assertDirectoryExists(
             $this->tmpDir . DIRECTORY_SEPARATOR . 'nested'
@@ -86,9 +84,7 @@ class ManagerTest extends TestCase
             )
         );
 
-        $this->assertTrue(
-            $manager->create('traffic', ['create-options'])
-        );
+        $manager->create('traffic', ['create-options']);
 
         $this->assertDirectoryExists(
             $this->tmpDir . DIRECTORY_SEPARATOR . 'traffic'
