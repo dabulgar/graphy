@@ -180,10 +180,6 @@ class UpdateOptions
             }
         } else if (is_array($data[$firstKey])) {
             foreach ($data as $time => $values) {
-                if (!is_int($time) && !is_string($time)) {
-                    throw CommandDefinitionException::fromMessage(sprintf("Invalid time key '%s'. Expected integer timestamp or string (e.g. 'N').", $time));
-                }
-
                 if (!is_array($values)) {
                     throw CommandDefinitionException::fromMessage(sprintf("Invalid values for time '%s'. Expected array of data source values.", $time));
                 }
