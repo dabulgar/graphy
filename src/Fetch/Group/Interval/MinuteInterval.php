@@ -2,7 +2,7 @@
 
 namespace Davos\Graphy\Fetch\Group\Interval;
 
-class MinuteInterval extends BaseInterval
+final class MinuteInterval extends BaseInterval
 {
     private int $baseSeconds = 60;
     public function getInterval(int $timestamp, string $timezone = 'UTC'): array

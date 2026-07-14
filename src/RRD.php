@@ -39,7 +39,7 @@ abstract class RRD
 
     abstract protected function dataSources(): array;
 
-    public function __construct()
+    final public function __construct()
 		{
         $this->loadDefinitions();
 

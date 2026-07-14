@@ -6,7 +6,7 @@ use Davos\Graphy\Shared\Exceptions\CommandDefinitionException;
 
 abstract class BaseInterval
 {
-    public function __construct(
+    final public function __construct(
         protected readonly int $intervals = 1
     ) {
         if ($this->intervals <= 0) {

@@ -2,7 +2,7 @@
 
 namespace Davos\Graphy\Builder;
 
-class RRA
+final class RRA
 {
     private ?string $cf = null;
     private float $xff = 0.5;

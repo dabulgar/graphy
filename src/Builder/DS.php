@@ -2,7 +2,7 @@
 
 namespace Davos\Graphy\Builder;
 
-class DS
+final class DS
 {
     private ?string $name = null;
     private ?string $type = null;

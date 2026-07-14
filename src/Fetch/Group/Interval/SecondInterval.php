@@ -2,7 +2,7 @@
 
 namespace Davos\Graphy\Fetch\Group\Interval;
 
-class SecondInterval extends BaseInterval
+final class SecondInterval extends BaseInterval
 {
     public function getInterval(int $timestamp, string $timezone = 'UTC'): array
     {

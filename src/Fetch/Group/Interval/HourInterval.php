@@ -2,7 +2,7 @@
 
 namespace Davos\Graphy\Fetch\Group\Interval;
 
-class HourInterval extends BaseInterval
+final class HourInterval extends BaseInterval
 {
     private int $baseSeconds = 3600;
 

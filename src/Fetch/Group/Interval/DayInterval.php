@@ -5,7 +5,7 @@ namespace Davos\Graphy\Fetch\Group\Interval;
 use DateTimeImmutable;
 use DateTimeZone;
 
-class DayInterval extends BaseInterval
+final class DayInterval extends BaseInterval
 {
     /**
      * @throws \DateMalformedStringException
