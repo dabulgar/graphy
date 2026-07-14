@@ -7,8 +7,8 @@ final class DS
     private ?string $name = null;
     private ?string $type = null;
     private ?int $heartbeat = null;
-    private null|string|int|float $min = 'U';
-    private null|string|int|float $max = 'U';
+    private string|int|float $min = 'U';
+    private string|int|float $max = 'U';
     private ?string $expression = null;
 
     public static function name(string $name): self
@@ -110,8 +110,8 @@ final class DS
             $this->name ?? '',
             $this->type ?? '',
             $this->heartbeat ?? '',
-            $this->min ?? '',
-            $this->max ?? ''
+            $this->min,
+            $this->max
         );
     }
 }
