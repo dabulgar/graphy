@@ -43,7 +43,8 @@
         }
     },
     "scripts": {
-        "test": "phpunit"
+        "test": "phpunit",
+        "stan": "vendor/bin/phpstan analyse"
     },
     "minimum-stability": "stable",
     "prefer-stable": true
