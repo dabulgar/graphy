@@ -45,7 +45,14 @@
     },
     "scripts": {
         "test": "phpunit",
-        "stan": "vendor/bin/phpstan analyse"
+        "stan": "phpstan analyse",
+        "cs:check": "php-cs-fixer check --diff",
+        "cs:fix": "php-cs-fixer fix --diff",
+        "quality": [
+            "@cs:check",
+            "@stan",
+            "@test"
+        ]
     },
     "minimum-stability": "stable",
     "prefer-stable": true
