@@ -2,7 +2,6 @@
 
 namespace Davos\Graphy\ValueObjects;
 
-use Davos\Graphy\Shared\Exceptions\CommandDefinitionException;
 use Davos\Graphy\ValueObjects\Exceptions\TimeReferenceException;
 
 class TimeReference
