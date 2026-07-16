@@ -14,7 +14,8 @@ class TimeWindowedBucket
         private readonly TimestampWatermark $watermark,
         private readonly RoundRobinArchive $archive,
         private readonly AggregatorInterface $aggregator = new ConsolidationAggregator(),
-    ) {}
+    ) {
+    }
 
     public function push(array $datasets): void
     {

@@ -15,7 +15,7 @@ final class WeekInterval extends BaseInterval
     {
         $datetime = (new DateTimeImmutable("@{$timestamp}"))
                 ->setTimezone(new DateTimeZone($timezone))
-                ->setTime(0,0,0)
+                ->setTime(0, 0, 0)
                 ->modify('monday this week');
 
         return [

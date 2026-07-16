@@ -25,11 +25,10 @@ class Fetcher
         private TimeRangeChunker $chunker,
         private Manager $manager,
         private RoundRobinArchive $archive,
-    )
-    {
+    ) {
 
     }
-    
+
     private function rrdSeries(): \Generator
     {
         $resolution = $this->chunker->resolution->getDurationInSeconds();

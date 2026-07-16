@@ -15,7 +15,7 @@ final class DayInterval extends BaseInterval
     {
         $datetime = (new DateTimeImmutable("@{$timestamp}"))
                 ->setTimezone(new DateTimeZone($timezone))
-                ->setTime(0,0,0);
+                ->setTime(0, 0, 0);
 
         return [
             'start' => $datetime->getTimestamp(),

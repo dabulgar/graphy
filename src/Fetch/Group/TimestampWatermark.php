@@ -14,7 +14,8 @@ class TimestampWatermark
     public function __construct(
         private readonly BaseInterval $interval,
         private readonly string $timezone = 'UTC'
-    ) {}
+    ) {
+    }
 
     public function level(int $timestamp): WatermarkLevel
     {

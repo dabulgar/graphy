@@ -11,8 +11,7 @@ class RrdToolExecutionException extends GraphyException
         protected array  $options,
         protected int    $exitCode = 0,
         ?\Throwable      $previous = null,
-    )
-    {
+    ) {
         $message = sprintf(
             "RRDTool %s failed for '%s'%s%s",
             $this->action,

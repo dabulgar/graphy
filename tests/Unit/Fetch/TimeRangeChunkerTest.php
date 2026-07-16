@@ -18,7 +18,7 @@ class TimeRangeChunkerTest extends TestCase
 
         $chunker = new TimeRangeChunker(
             $now - 20,
-            $now -10,
+            $now - 10,
             60,
             $step,
             $this->archive("RRA:MAX:0.5:1:40", $now, $step),
@@ -107,7 +107,7 @@ class TimeRangeChunkerTest extends TestCase
 
         $chunker = new TimeRangeChunker(
             $now - 200,
-            $now -10,
+            $now - 10,
             60,
             $step,
             $this->archive("RRA:MAX:0.5:1:400", $now, $step),
@@ -158,7 +158,7 @@ class TimeRangeChunkerTest extends TestCase
 
         $chunker = new TimeRangeChunker(
             $now - 20027,
-            $now -10,
+            $now - 10,
             60,
             $step,
             $this->archive("RRA:MAX:0.5:10:40000", $now, $step),

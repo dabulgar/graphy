@@ -11,7 +11,9 @@ use Davos\Graphy\Update\UpdatesRRD;
 
 class RRDBuilder
 {
-    use CreatesRRD, UpdatesRRD, FetchesRRD;
+    use CreatesRRD;
+    use UpdatesRRD;
+    use FetchesRRD;
 
     private RRD $model;
     private Manager $manager;

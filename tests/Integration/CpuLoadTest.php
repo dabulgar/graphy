@@ -33,7 +33,8 @@ class CpuLoadTest extends TestCase
 
         CpuLoad::create(self::$fileName);
 
-        CpuLoad::update(self::$fileName,
+        CpuLoad::update(
+            self::$fileName,
             [
                 self::$start + 1 => ['cpu_1' => 10, 'cpu_2' => 10, 'cpu_3' => 10],
                 self::$start + 2 => ['cpu_1' => 20, 'cpu_2' => 10, 'cpu_3' => 10],
@@ -180,7 +181,7 @@ class CpuLoadTest extends TestCase
             ->start($start)
             ->end($end)
             ->run()
-            ->labels(SecondInterval::for(5),  'Y-m-d H:i:s')
+            ->labels(SecondInterval::for(5), 'Y-m-d H:i:s')
             ->get();
 
         $this->assertSame(

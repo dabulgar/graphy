@@ -24,8 +24,7 @@ class TimeRangeChunker
         private readonly Duration          $step,
         private readonly RoundRobinArchive $archive,
         private ?int $fixedNow = null, // for testing purpose
-    )
-    {
+    ) {
         if ($this->chunkSize <= 0) {
             throw CommandDefinitionException::fromMessage("Chunk size must be greater than zero.");
         }

@@ -12,7 +12,7 @@ class RoundRobinArchive
         'MAX',
         'LAST',
     ];
-    
+
     private string $definition;
     private string $cf;
     private float $xff;
@@ -26,18 +26,19 @@ class RoundRobinArchive
     public function __construct(string $rraDefinition, int $index)
     {
         $this->definition = $rraDefinition;
-        
+
         $arr = explode(':', $rraDefinition);
         $count = count($arr);
-        
+
         if ($count < 4 || $count > 5) {
-            throw RoundRobinArchiveDefinitionException::fromMessage(sprintf(
-                'Invalid RRA definition "%s". Expected 4 or 5 parts separated by ":"',
-                $rraDefinition,
-            )
+            throw RoundRobinArchiveDefinitionException::fromMessage(
+                sprintf(
+                    'Invalid RRA definition "%s". Expected 4 or 5 parts separated by ":"',
+                    $rraDefinition,
+                )
             );
         }
-        
+
         if ($count === 5) {
             if (!in_array($arr[0], ['', 'RRA'], true)) {
                 throw RoundRobinArchiveDefinitionException::fromMessage(
@@ -46,7 +47,7 @@ class RoundRobinArchive
             }
             array_shift($arr);
         }
-        
+
         $this->setCf($arr[0]);
         $this->setXff($arr[1]);
         $this->setSteps($arr[2]);
@@ -54,7 +55,7 @@ class RoundRobinArchive
 
         $this->setIndex($index);
     }
-    
+
     public function getCf(): string
     {
         return $this->cf;
@@ -64,7 +65,7 @@ class RoundRobinArchive
     {
         return $this->xff;
     }
-    
+
     public function getSteps(): int
     {
         return $this->steps->getDurationInSeconds();
@@ -131,12 +132,12 @@ class RoundRobinArchive
     {
         return $this->rows->getDurationInSeconds();
     }
-    
+
     private function setRows(string $rows): void
     {
         $this->rows = new Duration($rows);
     }
-    
+
     public function getDefinition(): string
     {
         return sprintf('RRA:%s:%g:%d:%d', $this->getCf(), $this->getXff(), $this->getSteps(), $this->getRows());

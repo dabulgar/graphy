@@ -18,14 +18,14 @@ trait CreatesRRD
             new Flag(CreateOptions::START, $this->model->getStart()),
             new Flag(CreateOptions::NO_OVERWRITE, true),
         ];
-        
+
         $options = new CreateOptions(
             $this->model->getDataSources(),
             $this->model->getRoundRobinArchives(),
             $defaultFlags,
             $flags
         );
-        
+
         return $this->getManager()->create($file, $options->getOptions());
     }
 }

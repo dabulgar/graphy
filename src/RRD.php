@@ -32,7 +32,7 @@ abstract class RRD
     protected array $roundRobinArchives = [];
     protected string|Duration $step = '';
     protected string $start = '';
-    
+
     protected Manager $manager;
 
     abstract protected function roundRobinArchives(): array;

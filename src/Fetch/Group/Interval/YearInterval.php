@@ -15,7 +15,7 @@ final class YearInterval extends BaseInterval
     {
         $datetime = (new DateTimeImmutable("@{$timestamp}"))
                 ->setTimezone(new DateTimeZone($timezone))
-                ->setTime(0,0,0)
+                ->setTime(0, 0, 0)
                 ->modify('first day of January this year');
 
         return [

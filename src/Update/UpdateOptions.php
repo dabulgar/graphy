@@ -82,7 +82,9 @@ class UpdateOptions
 
         foreach ($this->dataSources as $dataSource) {
             // Skip COMPUTE. It is automatically calculated from rrdtool
-            if ($dataSource->getType() === 'COMPUTE') continue;
+            if ($dataSource->getType() === 'COMPUTE') {
+                continue;
+            }
 
             $this->dsOrder[] = $dataSource->getName();
             $this->validDs[] = $dataSource->getName();
@@ -178,7 +180,7 @@ class UpdateOptions
 
                 $this->appendBatch($batch['time'], $batch['values']);
             }
-        } else if (is_array($data[$firstKey])) {
+        } elseif (is_array($data[$firstKey])) {
             foreach ($data as $time => $values) {
                 if (!is_array($values)) {
                     throw CommandDefinitionException::fromMessage(sprintf("Invalid values for time '%s'. Expected array of data source values.", $time));

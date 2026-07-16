@@ -17,7 +17,7 @@ class CreateOptions
     public const string DAEMON = '--daemon';
     public const string TEMPLATE = '--template';
     public const string FROM_SOURCE = '--source';
-    
+
     private array $options = [];
 
     /**
@@ -39,17 +39,17 @@ class CreateOptions
         $mergedFlags = $this->mergeFlags($defaultFlags, $flags);
 
         $this->ensureRequiredFlagsExist([self::STEP, self::START], $mergedFlags, 'create');
-        
+
         $this->includeFlags($mergedFlags, 'create');
         $this->includeDataSources($dataSources);
         $this->includeRoundRobinArchives($roundRobinArchives);
     }
-    
+
     public function getOptions(): array
     {
         return $this->options;
     }
-    
+
     public static function getFlags(): array
     {
         return [
@@ -61,14 +61,14 @@ class CreateOptions
             self::FROM_SOURCE,
         ];
     }
-    
+
     private function includeDataSources(array $dataSources): void
     {
         foreach ($dataSources as $dataSource) {
             $this->options[] = $dataSource->getDefinition();
         }
     }
-    
+
     private function includeRoundRobinArchives(array $roundRobinArchives): void
     {
         foreach ($roundRobinArchives as $roundRobinArchive) {

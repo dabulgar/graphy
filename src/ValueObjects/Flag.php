@@ -13,19 +13,19 @@ class Flag
      * @var string|int|bool
      */
     private string|int|bool $value;
-    
+
     public function __construct(string $flag, string|int|bool $value = true)
     {
         $this->flag = $flag;
-        
+
         $this->value = $value;
     }
-    
+
     public function getFlag(): string
     {
         return $this->flag;
     }
-    
+
     public function getValue(): string|int|bool
     {
         return $this->value;
