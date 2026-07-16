@@ -8,7 +8,7 @@ class ExtensionDriver implements DriverInterface
 {
     public function create(string $file, array $options, int $permission): true|string
     {
-		$res = \rrd_create($file, $options);
+        $res = \rrd_create($file, $options);
         if ($res === false) {
             return \rrd_error();
         }

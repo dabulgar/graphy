@@ -6,69 +6,69 @@ use Davos\Graphy\ValueObjects\Exceptions\RoundRobinArchiveDefinitionException;
 
 class RoundRobinArchive
 {
-	public const VALID_CF = [
-		'AVERAGE',
-		'MIN',
-		'MAX',
-		'LAST',
-	];
-	
-	private string $definition;
-	private string $cf;
-	private float $xff;
-	private Duration $steps;
-	private Duration $rows;
+    public const VALID_CF = [
+        'AVERAGE',
+        'MIN',
+        'MAX',
+        'LAST',
+    ];
+    
+    private string $definition;
+    private string $cf;
+    private float $xff;
+    private Duration $steps;
+    private Duration $rows;
 
     /** @var int RRA index */
     private int $index;
     private int $firstTimestamp;
 
-	public function __construct(string $rraDefinition, int $index)
-	{
-		$this->definition = $rraDefinition;
-		
-		$arr = explode(':', $rraDefinition);
-		$count = count($arr);
-		
-		if ($count < 4 || $count > 5) {
-			throw RoundRobinArchiveDefinitionException::fromMessage(sprintf(
-					'Invalid RRA definition "%s". Expected 4 or 5 parts separated by ":"',
-					$rraDefinition,
-				)
-			);
-		}
-		
-		if ($count === 5) {
-			if (!in_array($arr[0], ['', 'RRA'], true)) {
-				throw RoundRobinArchiveDefinitionException::fromMessage(
-					sprintf('Invalid RRA prefix "%s". Expected "RRA"', $arr[0])
-				);
-			}
-			array_shift($arr);
-		}
-		
-		$this->setCf($arr[0]);
-		$this->setXff($arr[1]);
-		$this->setSteps($arr[2]);
-		$this->setRows($arr[3]);
+    public function __construct(string $rraDefinition, int $index)
+    {
+        $this->definition = $rraDefinition;
+        
+        $arr = explode(':', $rraDefinition);
+        $count = count($arr);
+        
+        if ($count < 4 || $count > 5) {
+            throw RoundRobinArchiveDefinitionException::fromMessage(sprintf(
+                'Invalid RRA definition "%s". Expected 4 or 5 parts separated by ":"',
+                $rraDefinition,
+            )
+            );
+        }
+        
+        if ($count === 5) {
+            if (!in_array($arr[0], ['', 'RRA'], true)) {
+                throw RoundRobinArchiveDefinitionException::fromMessage(
+                    sprintf('Invalid RRA prefix "%s". Expected "RRA"', $arr[0])
+                );
+            }
+            array_shift($arr);
+        }
+        
+        $this->setCf($arr[0]);
+        $this->setXff($arr[1]);
+        $this->setSteps($arr[2]);
+        $this->setRows($arr[3]);
 
         $this->setIndex($index);
-	}
-	
-	public function getCf(): string
-	{
-		return $this->cf;
-	}
+    }
+    
+    public function getCf(): string
+    {
+        return $this->cf;
+    }
 
-	public function getXff(): float
-	{
-		return $this->xff;
-	}
-	
-	public function getSteps(): int
-	{
-		return $this->steps->getDurationInSeconds();
-	}
+    public function getXff(): float
+    {
+        return $this->xff;
+    }
+    
+    public function getSteps(): int
+    {
+        return $this->steps->getDurationInSeconds();
+    }
 
     public function getResolutionInSeconds(int|Duration $baseStep): int
     {
@@ -122,25 +122,25 @@ class RoundRobinArchive
         $this->xff = $val;
     }
 
-	private function setSteps(string $steps): void
-	{
-		$this->steps = new Duration($steps);
-	}
+    private function setSteps(string $steps): void
+    {
+        $this->steps = new Duration($steps);
+    }
 
-	public function getRows(): int
-	{
-		return $this->rows->getDurationInSeconds();
-	}
-	
-	private function setRows(string $rows): void
-	{
-		$this->rows = new Duration($rows);
-	}
-	
-	public function getDefinition(): string
-	{
-		return sprintf('RRA:%s:%g:%d:%d', $this->getCf(), $this->getXff(), $this->getSteps(), $this->getRows());
-	}
+    public function getRows(): int
+    {
+        return $this->rows->getDurationInSeconds();
+    }
+    
+    private function setRows(string $rows): void
+    {
+        $this->rows = new Duration($rows);
+    }
+    
+    public function getDefinition(): string
+    {
+        return sprintf('RRA:%s:%g:%d:%d', $this->getCf(), $this->getXff(), $this->getSteps(), $this->getRows());
+    }
 
     public function setIndex(int $index): void
     {

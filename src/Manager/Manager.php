@@ -50,7 +50,7 @@ class Manager
             action: 'create',
             options: $options,
         );
-	}
+    }
 
     /**
      * @param string $file
@@ -58,8 +58,8 @@ class Manager
      * @return bool
      * @throws RrdToolExecutionException
      */
-	public function update(string $file, array $options): bool
-	{
+    public function update(string $file, array $options): bool
+    {
         $rrdFileName = PathManager::prepareFullPath($this->config->getPath(), $this->config->getPathMapper(), $file);
 
         FileManager::ensureFileExists($rrdFileName);
@@ -79,15 +79,15 @@ class Manager
             action: 'update',
             options: $options,
         );
-	}
+    }
 
     /**
      * @param string $file
      * @param array $options
      * @return RrdSeries
      */
-	public function fetch(string $file, array $options): RrdSeries
-	{
+    public function fetch(string $file, array $options): RrdSeries
+    {
         $rrdFileName = PathManager::prepareFullPath($this->config->getPath(), $this->config->getPathMapper(), $file);
 
         FileManager::ensureFileExists($rrdFileName);
@@ -107,7 +107,7 @@ class Manager
             action: 'fetch',
             options: $options,
         );
-	}
+    }
 
     public function first(string $file, int $index): int
     {

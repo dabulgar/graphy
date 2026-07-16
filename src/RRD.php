@@ -26,21 +26,21 @@ use Davos\Graphy\ValueObjects\RoundRobinArchive;
 abstract class RRD
 {
     /** @var DataSource[] */
-	protected array $dataSources = [];
+    protected array $dataSources = [];
 
     /** @var RoundRobinArchive[] */
-	protected array $roundRobinArchives = [];
-	protected string|Duration $step = '';
-	protected string $start = '';
-	
-	protected Manager $manager;
+    protected array $roundRobinArchives = [];
+    protected string|Duration $step = '';
+    protected string $start = '';
+    
+    protected Manager $manager;
 
     abstract protected function roundRobinArchives(): array;
 
     abstract protected function dataSources(): array;
 
     final public function __construct()
-		{
+    {
         $this->loadDefinitions();
 
         $this->normalizeDataSources();
@@ -63,33 +63,33 @@ abstract class RRD
      * @return DataSource[]
      */
     public function getDataSources(): array
-	{
-		return $this->dataSources;
-	}
+    {
+        return $this->dataSources;
+    }
 
     /**
      * @return RoundRobinArchive[]
      */
-	public function getRoundRobinArchives(): array
-	{
-		return $this->roundRobinArchives;
-	}
+    public function getRoundRobinArchives(): array
+    {
+        return $this->roundRobinArchives;
+    }
 
     /**
      * @return Duration
      */
-	public function getStep(): Duration
-	{
-		return $this->step;
-	}
+    public function getStep(): Duration
+    {
+        return $this->step;
+    }
 
     /**
      * @return string
      */
-	public function getStart(): string
-	{
-		return $this->start;
-	}
+    public function getStart(): string
+    {
+        return $this->start;
+    }
 
     private function loadDefinitions(): void
     {
