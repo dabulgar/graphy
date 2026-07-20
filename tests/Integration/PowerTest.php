@@ -1582,8 +1582,8 @@ class PowerTest extends TestCase
             ->resolution('30m')
             ->start($start)
             ->end($end)
-            ->run()
             ->timezone('Europe/Sofia')
+            ->run()
             ->group(DayInterval::for(1))
             ->labels(DayInterval::for(1))
             ->get();
@@ -1672,8 +1672,8 @@ class PowerTest extends TestCase
             ->resolution('30m')
             ->start($start)
             ->end($end)
-            ->run()
             ->timezone('America/New_York')
+            ->run()
             ->group(DayInterval::for(1))
             ->labels(DayInterval::for(1))
             ->get();

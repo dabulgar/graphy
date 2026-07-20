@@ -12,7 +12,6 @@ use Davos\Graphy\ValueObjects\RoundRobinArchive;
 
 class Fetcher
 {
-    private ?string $timezone = null;
     private ?TimeWindowedBucket $timeWindowedBucket = null;
     private ?TimestampWatermark $labelsWatermark = null;
     private string $dateFormat;
@@ -22,6 +21,7 @@ class Fetcher
         private string $file,
         private string $cf,
         private array $flags,
+        private string $timezone,
         private TimeRangeChunker $chunker,
         private Manager $manager,
         private RoundRobinArchive $archive,
@@ -98,9 +98,7 @@ class Fetcher
 
     public function group(BaseInterval $interval): self
     {
-        $tz = $this->resolveTimezone();
-
-        $watermark = new TimestampWatermark(interval: $interval, timezone: $tz);
+        $watermark = new TimestampWatermark(interval: $interval, timezone: $this->timezone);
 
         $this->timeWindowedBucket = new TimeWindowedBucket(watermark: $watermark, archive: $this->archive);
 
@@ -109,25 +107,11 @@ class Fetcher
 
     public function labels(BaseInterval $interval, string $format = 'Y-m-d H:i:s', $nonBoundary = 'ts'): self
     {
-        $tz = $this->resolveTimezone();
-
-        $this->labelsWatermark = new TimestampWatermark(interval: $interval, timezone: $tz);
+        $this->labelsWatermark = new TimestampWatermark(interval: $interval, timezone: $this->timezone);
         $this->dateFormat = $format;
         $this->nonBoundary = $nonBoundary;
 
         return $this;
-    }
-
-    public function timezone(string $timezone): self
-    {
-        $this->timezone = $timezone;
-
-        return $this;
-    }
-
-    private function resolveTimezone(): string
-    {
-        return $this->timezone ?? $this->manager->config->getTimezone();
     }
 
     /**
@@ -135,8 +119,6 @@ class Fetcher
      */
     private function resolveTimestamp(int $timestamp): mixed
     {
-        $tz = $this->resolveTimezone();
-
         if (is_null($this->labelsWatermark)) {
             return $timestamp;
         }
@@ -146,11 +128,11 @@ class Fetcher
         if ($level === WatermarkLevel::HitBoundary) {
             return (new \DateTime())
                 ->setTimestamp($timestamp)
-                ->setTimezone(new \DateTimeZone($tz))
+                ->setTimezone(new \DateTimeZone($this->timezone))
                 ->format($this->dateFormat);
         }
 
-        return $this->resolveNonBoundary($timestamp, $tz);
+        return $this->resolveNonBoundary($timestamp, $this->timezone);
     }
 
     /**

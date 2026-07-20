@@ -17,6 +17,7 @@ trait FetchesRRD
     private Duration $resolution;
     private int|string $start;
     private int|string $end;
+    private ?string $timezone = null;
     private RoundRobinArchive $roundRobinArchive;
 
     public function fetch(string $file, int $chunkSize = 10_000): self
@@ -82,6 +83,13 @@ trait FetchesRRD
         return $this;
     }
 
+    public function timezone(string $timezone): self
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
     public function fromArchive(int|string $rra): self
     {
         $archives = $this->model->getRoundRobinArchives();
@@ -139,7 +147,12 @@ trait FetchesRRD
             $this->roundRobinArchive,
         );
 
-        return new Fetcher($this->file, $this->cf, [], $timeRange, $this->manager, $this->roundRobinArchive);
+        return new Fetcher($this->file, $this->cf, [], $this->resolveTimezone(), $timeRange, $this->manager, $this->roundRobinArchive);
+    }
+
+    private function resolveTimezone(): string
+    {
+        return $this->timezone ?? $this->manager->config->getTimezone();
     }
 
     private function resolveMatchingArchive(): void

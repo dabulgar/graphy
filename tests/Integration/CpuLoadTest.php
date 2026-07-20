@@ -217,8 +217,8 @@ class CpuLoadTest extends TestCase
             ->resolution('1s')
             ->start($start)
             ->end($end)
-            ->run()
             ->timezone('Europe/Sofia')
+            ->run()
             ->labels(SecondInterval::for(5), 'Y-m-d H:i:s')
             ->get();
 
@@ -329,8 +329,8 @@ class CpuLoadTest extends TestCase
             ->resolution('1s')
             ->start($start)
             ->end($end)
-            ->run()
             ->timezone('Europe/Sofia')
+            ->run()
             ->labels(SecondInterval::for(5), 'H:i:s', 'Y-m-d H:i:s')
             ->get();
 
