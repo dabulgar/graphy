@@ -15,6 +15,8 @@ final class ManagerFactory
     public static function configure(array $config): void
     {
         self::$config = new GraphyConfig($config);
+
+        self::$manager = null;
     }
 
     public static function make(): Manager
