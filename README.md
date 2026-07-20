@@ -195,8 +195,8 @@ $data = Power::fetch('power.rrd')
     ->resolution('30m')
     ->start('now-30d')
     ->end('now')
-    ->run()
     ->timezone('Europe/Sofia')          // which calendar the buckets are drawn on
+    ->run()
     ->group(DayInterval::for(1))        // 1 = every day; DayInterval::for(7) = every 7 days, etc.
     ->labels(DayInterval::for(1))       // optional: turn each bucket's timestamp into a readable string
     ->get();
